@@ -1,0 +1,57 @@
+-- Table: appliance
+
+ DROP TABLE public."Appliances" CASCADE;
+ DROP TABLE appliance CASCADE;
+
+CREATE TABLE appliance
+(
+    id integer NOT NULL,
+    name varchar(255),
+    id_household integer NOT NULL,
+    id_neighborhood integer,
+    CONSTRAINT appliances_pkey PRIMARY KEY (id)
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE appliance
+    OWNER to pierrick;
+COMMENT ON TABLE appliance
+    IS 'Liste des �quipements connect�s';
+
+-- Table: measure
+
+DROP TABLE public."Measures" CASCADE;
+DROP TABLE measure CASCADE;
+
+CREATE TABLE measure
+(
+    energy integer,
+    state integer NOT NULL,
+    time_stamp timestamp NOT NULL,
+    id_appliance integer NOT NULL,
+    CONSTRAINT fk_appliance FOREIGN KEY (id_appliance)
+        REFERENCES appliance (id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+WITH (
+    OIDS = FALSE
+)
+TABLESPACE pg_default;
+
+ALTER TABLE measure
+    OWNER to pierrick;
+COMMENT ON TABLE measure
+    IS 'Collecte des mesures ( consommation d''�nergie )';
+
+-- Index: fki_appliance
+
+-- DROP INDEX public.fki_appliance;
+
+CREATE INDEX fki_appliance
+    ON measure USING btree
+    (id_appliance)
+    TABLESPACE pg_default;
